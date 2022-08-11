@@ -1,4 +1,4 @@
-# PdoFish
+# PdoFish2
 A wrapper for PHP and PDO.
 
 ## Purpose

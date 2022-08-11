@@ -10,6 +10,7 @@ $pf2 = new PdoFish2();
 $tables = new pf2Tables(); 
 
 // this will print the record from the "table1" table with an ID of 1 
+// it uses the pf2Tables class to target tables for brevity 
 $a = $tables->table1()->find(1);
 print_r($a); 
 

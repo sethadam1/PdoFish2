@@ -1,5 +1,10 @@
 <?php 
 
+/*
+ * This class extends PdoFish2 
+ * These table chaining functions enable powerful, concise scripting as seen in /examples/index.php
+ */
+
 class pf2Tables extends PdoFish2 { 
 	
 	public function table1() { 
