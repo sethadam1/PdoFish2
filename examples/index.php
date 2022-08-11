@@ -22,12 +22,15 @@ print_r($b);
 $c = $tables->table1()->find_by_column("name","Adam");
 print_r($c);
 
-// you can build complex queries 
+/* you can build complex queries 
+ * you don't need to route through something like the pf2Tables class 
+ * if you have a "from" element in your array
+ */ 
 $d = $pf2->all([
 	'select'=>'t1.field1, t2.field2, t3.field3',
 	'from' => 'table1 t1',
 	'joins' => 'LEFT JOIN table2 t2 ON t1.col=t2.col LEFT JOIN table3 t3 ON t1.colx=t3.colx',
-	'conditions' => ['t1.coly=? AND t2.colz',$val1,$val2],
+	'conditions' => ['t1.coly=? AND t2.colz=?',$val1,$val2],
 	'limit'=>3,
 	'order'=>'t3.field3 DESC'
 ]); 
