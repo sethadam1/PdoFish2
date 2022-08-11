@@ -3,11 +3,15 @@
 require '../src/PdoFish2.php'; 
 require 'pf2_tables.php'; 
 
+$creds = [
+	'database'=>'testdb', 'username'=>'dbuser', 'password'=>'example_password'
+];
+
 // here's a raw PdoFish2 object
-$pf2 = new PdoFish2(); 
+$pf2 = new PdoFish2($creds); 
 
 // here's an instance of the extended class
-$tables = new pf2Tables(); 
+$tables = new pf2Tables($creds); 
 
 // this will print the record from the "table1" table with an ID of 1 
 // it uses the pf2Tables class to target tables for brevity 

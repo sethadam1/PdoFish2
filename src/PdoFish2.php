@@ -6,6 +6,12 @@ class PdoFish2 {
 	var $table = null;
 	var $creds = array(); 
 
+	/* 
+	 * $creds is an array with the following keys: 
+	 * 	'database' => the name of the database 
+	 * 	'username' => the username to connect with 
+	 * 	'password' => the password to connect with 
+	 */ 
 	function __construct($creds=[]) 
 	{ 
 		$db = $creds['database']; 
@@ -21,6 +27,7 @@ class PdoFish2 {
 		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
 	
+	/* delete matching records */ 
 	public function delete_many(string $column, $vals)
 	{
 		$str = (is_array($vals)) ? implode(",", $vals) : $vals;
@@ -28,34 +35,40 @@ class PdoFish2 {
 		return $stmt->rowCount();
 	}
 	
+	/* delete a record by "id" */ 
 	public function delete_by_id($val)
 	{
 		$stmt = $this->run("DELETE FROM `".$this->table."` WHERE id = ?", [$val]);
 		return $stmt->rowCount();
 	}
 	
+	/* delete a record by a given column */
 	public function delete_by_column($col, $val)
 	{
 		$stmt = $this->run("DELETE FROM `".$this->table."` WHERE ".$col." = ?", [$val]);
 		return $stmt->rowCount();
 	}
 	
+	/* set a table and return $this */ 
 	public function set_table($tbl) { 
 		$this->table = $tbl; 
 		return $this; 
 	}
 
+	/* set a table */ 
 	public function use_table($tbl) { 
 		$this->table = $tbl; 
 	}
 	
+	/* count number of records */ 
 	public function count($data=[])  
 	{
 		$stmt = $this->process($data);
 		return (int) $stmt->rowCount();
 	}
-		
-	public function delete($where=[], $limit = NULL)
+	
+	/* delete based on criteria */
+	public function delete($where=[])
 	{
 		//collect the values from collection
 		$values = array_values($where);
@@ -67,16 +80,12 @@ class PdoFish2 {
 			$whereDetails .= $i == 0 ? "$key = ?" : " AND $key = ?";
 			$i++;
 		}
-	
-		//if limit is a number use a limit on the query
-		if (is_numeric($limit)) {
-			$limit = "LIMIT $limit";
-		}
-		error_log("DELETE FROM `".$this->table."` WHERE $whereDetails", $values);
+
 		$stmt = $this->run("DELETE FROM `".$this->table."` WHERE $whereDetails", $values);
 		return $stmt->rowCount();
 	}
 	
+	/* update fields by criteria */
 	public function update(array $data, array $where)
 	{
 		//merge data and where together
@@ -109,6 +118,7 @@ class PdoFish2 {
 		return $this->insert($tbl, $data);
 	}
 
+	/* insert a new record into the database */
 	public function insert(array $data)
 	{
 		//add columns into comma separated string
@@ -130,18 +140,21 @@ class PdoFish2 {
 		return $this->pdo->lastInsertId();
 	}
 	
+	/* find a record by id */
 	public function find($id, $fetch_mode = NULL)
 	{
 		if(is_null($fetch_mode)) { $fetch_mode=PDO::FETCH_OBJ; }
 		return $this->run("SELECT * FROM `".$this->table."` WHERE id = ?", [$id])->fetch($fetch_mode);
 	}
 	
+	/* find a record by a specific column */
 	public function find_by_column($col, $val, $fetch_mode = NULL)
 	{
 		if(is_null($fetch_mode)) { $fetch_mode=PDO::FETCH_OBJ; }
 		return $this->run("SELECT * FROM `".$this->table."` WHERE `".$col."` = ?", [$val])->fetch($fetch_mode);
 	}
 
+	/* run a query */ 
 	public function run($sql, $args = [])
 	{
 		if (empty($args)) {
@@ -154,6 +167,7 @@ class PdoFish2 {
 		return $stmt;
 	}
 
+	/* parse and then run a query and return the result object */
 	private function process(array $data)
 	{
 		$table = $data['from'] ?? $this->table; 
@@ -186,7 +200,8 @@ class PdoFish2 {
 		}
 		return $stmt;
 	}
-	
+
+	/* find all matching records */
 	public function all($data=[], $fetch_mode=NULL)
 	{
 		if(is_null($fetch_mode)) {
@@ -196,6 +211,7 @@ class PdoFish2 {
 		return $stmt->fetchAll($fetch_mode);
 	}
 	
+	/* find the first matching record */
 	public function first($data, $fetch_mode=NULL)
 	{
 		$data['limit'] = 1;
@@ -204,11 +220,13 @@ class PdoFish2 {
 		return $stmt->fetch($fetch_mode);
 	}
 
+	/* execute raw sql data - be careful! */
 	public function raw($sql)
 	{
 		$this->pdo->query($sql);
 	}
 	
+	/* find a single record via a SQL statement */ 
 	public function find_by_sql($sql, $args=NULL, $fetch_mode=NULL)
 	{
 		if(is_null($fetch_mode)) { $fetch_mode=PDO::FETCH_OBJ; }
@@ -216,6 +234,7 @@ class PdoFish2 {
 		return $stmt->fetch($fetch_mode);
 	}
 	
+	/* find all records via a SQL statement */ 
 	public function find_all_by_sql($sql, $args=NULL, $fetch_mode=NULL)
 	{
 		if(is_null($fetch_mode)) { $fetch_mode=PDO::FETCH_OBJ; }
@@ -226,7 +245,6 @@ class PdoFish2 {
 	/**
 	 * dynamic callable
 	 *
-	 * @param  string $table table name
 	 * must be called via PdoFish2 class
 	 */
 	
