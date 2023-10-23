@@ -23,7 +23,7 @@ $b = $tables->table1()->first([ 'conditions'=>['name=?',"Adam"] ]);
 print_r($b); 
 
 // this will do the same thing
-$c = $tables->table1()->find_by_column("name","Adam");
+$c = $tables->table1()->find_by_name("Adam");
 print_r($c);
 
 /* you can build complex queries 
