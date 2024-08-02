@@ -120,6 +120,7 @@ $object->delete_by_id(5);
   
 // delete rows where column "user_id" is equal to 1, 2, or 3  
 $object->deleteMany(['user_id', '1,2,3']);   
+```
    
 ## Arguments supported
 The following arguments are supported in the PdoFish queries:  
