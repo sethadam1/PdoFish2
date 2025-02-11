@@ -27,6 +27,10 @@ class PdoFish2 {
 		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
 	
+	public function t($tbl) { // shortcut for set_table() 
+		$this->set_table($tbl); 
+	}
+	
 	/* delete matching records */ 
 	public function delete_many(string $column, $vals)
 	{

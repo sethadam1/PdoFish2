@@ -7,6 +7,8 @@ PdoFish2 attempts to create a flexible, lightweight layer on top of PDO. Its syn
 This project is not for everyone. Sloppy programming can break these functions. However, if you're already familiar with Active Record or wish to use an Active Record style DB interface in PHP, this may suit. The aim of this project was simple: readable code that is as thin a layer on top of PDO as possible. 
 
 ## Currently Supported Methods
+```$object->set_table(tbl_name)``` - a chainable function to specify a table    
+```$object->t()``` - a shortcut for ```set_table```  
 ```$object->raw()``` - execute raw SQL  
 ```$object->find()``` - find by a column called "id"  
 ```$object->all()``` - return all rows matching a query   
@@ -51,7 +53,7 @@ $data = [
 	'col2'=> 'a string',  
 	'col3' => 12345  
 ];  
-$y = $pf2->insert($data);  
+$y = $pf2->set_table('products')->insert($data);  
   
 echo $y;   
 // example response "3"  
@@ -61,13 +63,13 @@ echo $y;
 
 ```php  
 //print an object
-$x = $pf2->first([ 'conditions'=>['some_field=?', 'some_value'] ]);
+$x = $pf2->t('users')->first([ 'conditions'=>['some_field=?', 'some_value'] ]);
 print_r($x); 
 ```  
 
 ```php  
 //print an associative array 
-$x = $pf2->first(['conditions'=>['some_field=?', 'some_value']], PDO::FETCH_ASSOC);
+$x = $pf2->first(['from'=>'table_name', 'conditions'=>['some_field=?', 'some_value']], PDO::FETCH_ASSOC);
 print_r($x); 
 ```  
 ```php  
@@ -78,7 +80,7 @@ print_r($x);
 
 ```php  
 // print a row where id = 5   
-$x = $object->find(5);
+$x = $object->t('table')->find(5);
 print_r($x); 
 ```
 
@@ -98,28 +100,28 @@ print_r($x);
 #### Update  
 ```php    
 // updates column "firstname" to "Boris" where id = 5
-$object->update(['firstname'=>'Boris'], ['id'=>5]); 
+$object->t('table_name')->update(['firstname'=>'Boris'], ['id'=>5]); 
 
 // updates columns "firstname" to "June", "lastname" to "Basoon" where id = 5
-$object->update(['firstname'=>'June', 'lastname'=>'Basoon'], ['id'=>5]); 
+$object->t('table_name')->update(['firstname'=>'June', 'lastname'=>'Basoon'], ['id'=>5]); 
 ```   
 
 Now consider a table with three columns, "row_id", "columnA", and "columnB."   
 ```php   
 // this will NOT work  
-$y = $object->find(3); //find a model with primary key=3  
+$y = $object->t('table_name')->find(3); //find a model with primary key=3  
 ```  
   
 #### Delete  
 ```php    
 // delete rows where column "firstname" is equal to "Boris"  
-$object->delete(['firstname'=>'Boris']);   
+$object->t('table_name')->delete(['firstname'=>'Boris']);   
   
 // delete row where column "id" is equal to "5"  
-$object->delete_by_id(5);   
+$object->t('table_name')->delete_by_id(5);   
   
 // delete rows where column "user_id" is equal to 1, 2, or 3  
-$object->deleteMany(['user_id', '1,2,3']);   
+$object->t('table_name')->deleteMany(['user_id', '1,2,3']);   
 ```
    
 ## Arguments supported
