@@ -12,3 +12,18 @@ composer.lock
 
 # Logs
 *.log
+
+# LLM / AI tools
+.claude
+.cursor
+.windsurf
+.kiro
+.continue
+.codeium
+.copilot
+.codex
+.openai
+.gpt4all
+.llama
+.aider*
+.zed
