@@ -20,7 +20,25 @@ composer require sethadam1/PdoFish2
 
 ```php
 require_once '/path/to/PdoFish2/src/PdoFish2.php';
+
+// Pass credentials directly, or set DB_HOST, DB_NAME, DB_USER, DB_PASSWORD
+// environment variables and call with no arguments (see Instantiating below).
+$pf2 = new PdoFish2(['host' => 'localhost', 'database' => 'mydb', 'username' => 'dbuser', 'password' => 'secret']);
+```
+
+#### Using environment variables
+
+These two calls are functionally equivalent:
+
+```php
 $pf2 = new PdoFish2();
+
+$pf2 = new PdoFish2([
+    'host'     => $_ENV['DB_HOST'],
+    'database' => $_ENV['DB_NAME'],
+    'username' => $_ENV['DB_USER'],
+    'password' => $_ENV['DB_PASSWORD'],
+]);
 ```
 
 ## Currently Supported Methods
@@ -52,8 +70,10 @@ $pf2 = new PdoFish2();
 ##### For the purposes of these examples, we'll assume you'll assign PdoFish2 to the variable $pf2.
 
 #### Instantiating
+PdoFish2 accepts credentials either as a constructor argument or from environment variables. If no argument is passed, it automatically reads `DB_HOST`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` from your environment (e.g. via `.env` + a loader, server config, or shell exports).
+
 ```php
-// Using credentials array
+// Option 1: pass credentials directly
 $pf2 = new PdoFish2([
     'host'     => 'localhost',
     'database' => 'mydb',
@@ -61,7 +81,8 @@ $pf2 = new PdoFish2([
     'password' => 'secret',
 ]);
 
-// Or using environment variables (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
+// Option 2: rely on environment variables — no argument needed
+// Requires DB_HOST, DB_NAME, DB_USER, and DB_PASSWORD to be set in $_ENV
 $pf2 = new PdoFish2();
 ```
 
