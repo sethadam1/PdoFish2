@@ -1,5 +1,5 @@
 {
-    "name": "sethadam1/PdoFish2",
+    "name": "sethadam1/pdofish2",
     "description": "A flexible, lightweight PDO wrapper for PHP inspired by Active Record",
     "type": "library",
     "license": "MIT",
