@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Composer
+vendor/
+composer.lock
+
+# Environment / credentials
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log

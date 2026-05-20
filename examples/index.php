@@ -1,44 +1,101 @@
-<?php 
+<?php
 
-require '../src/PdoFish2.php'; 
-require 'pf2_tables.php'; 
+require '../src/PdoFish2.php';
+require 'pf2_tables.php';
 
+// Load schema.sql into your database first, then set credentials here.
 $creds = [
-	'database'=>'testdb', 'username'=>'dbuser', 'password'=>'example_password'
+    'host'     => 'localhost',
+    'database' => 'testdb',
+    'username' => 'dbuser',
+    'password' => 'secret',
 ];
 
-// here's a raw PdoFish2 object
-$pf2 = new PdoFish2($creds); 
+$pf2    = new PdoFish2($creds);
+$tables = new pf2Tables($creds);
 
-// here's an instance of the extended class
-$tables = new pf2Tables($creds); 
+// -----------------------------------------------------------------------
+// FIND by primary key
+// -----------------------------------------------------------------------
 
-// this will print the record from the "table1" table with an ID of 1 
-// it uses the pf2Tables class to target tables for brevity 
-$a = $tables->table1()->find(1);
-print_r($a); 
+$user = $tables->users()->find(1);
+echo $user->name . "\n"; // Alice
 
-// this will print the record from the "table1" table where the "name" field is "Adam"  
-$b = $tables->table1()->first([ 'conditions'=>['name=?',"Adam"] ]);
-print_r($b); 
+// -----------------------------------------------------------------------
+// FIRST — single row matching a condition
+// -----------------------------------------------------------------------
 
-// this will do the same thing
-$c = $tables->table1()->find_by_name("Adam");
-print_r($c);
+$bob = $tables->users()->first(['conditions' => ['name=?', 'Bob']]);
+echo $bob->email . "\n"; // bob@example.com
 
-/* you can build complex queries 
- * you don't need to route through something like the pf2Tables class 
- * if you have a "from" element in your array
- */ 
-$d = $pf2->all([
-	'select'=>'t1.field1, t2.field2, t3.field3',
-	'from' => 'table1 t1',
-	'joins' => 'LEFT JOIN table2 t2 ON t1.col=t2.col LEFT JOIN table3 t3 ON t1.colx=t3.colx',
-	'conditions' => ['t1.coly=? AND t2.colz=?',$val1,$val2],
-	'limit'=>3,
-	'order'=>'t3.field3 DESC'
-]); 
+// -----------------------------------------------------------------------
+// Dynamic find_by_* — equivalent to find_by_column()
+// -----------------------------------------------------------------------
 
-// see more in the README file
+$alice = $tables->users()->find_by_email('alice@example.com');
+echo $alice->name . "\n"; // Alice
 
+// -----------------------------------------------------------------------
+// ALL — multiple rows, optional conditions / order / limit
+// -----------------------------------------------------------------------
 
+$published = $tables->posts()->all([
+    'conditions' => ['status=?', 'published'],
+    'order'      => 'created_at DESC',
+]);
+foreach ($published as $post) {
+    echo $post->title . "\n";
+}
+
+// -----------------------------------------------------------------------
+// ALL with a JOIN across tables
+// -----------------------------------------------------------------------
+
+$feed = $pf2->all([
+    'select'     => 'p.title, p.status, u.name AS author',
+    'from'       => 'posts p',
+    'joins'      => 'LEFT JOIN users u ON p.user_id = u.id',
+    'conditions' => ['p.status=?', 'published'],
+    'order'      => 'p.created_at DESC',
+    'limit'      => 10,
+]);
+foreach ($feed as $row) {
+    echo $row->author . ': ' . $row->title . "\n";
+}
+
+// -----------------------------------------------------------------------
+// COUNT
+// -----------------------------------------------------------------------
+
+$total = $tables->posts()->count(['conditions' => ['status=?', 'published']]);
+echo "Published posts: $total\n";
+
+// -----------------------------------------------------------------------
+// INSERT — returns the new row's ID
+// -----------------------------------------------------------------------
+
+$newId = $tables->posts()->insert([
+    'user_id' => 1,
+    'title'   => 'A New Post',
+    'body'    => 'Hello again.',
+    'status'  => 'draft',
+]);
+echo "Inserted post ID: $newId\n";
+
+// -----------------------------------------------------------------------
+// UPDATE
+// -----------------------------------------------------------------------
+
+$tables->posts()->update(['status' => 'published'], ['id' => $newId]);
+
+// -----------------------------------------------------------------------
+// DELETE by ID
+// -----------------------------------------------------------------------
+
+$tables->posts()->delete_by_id($newId);
+
+// -----------------------------------------------------------------------
+// DELETE MANY — remove all posts for a list of user IDs
+// -----------------------------------------------------------------------
+
+// $tables->posts()->delete_many('user_id', [1, 2]);

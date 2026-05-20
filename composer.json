@@ -1,0 +1,21 @@
+{
+    "name": "sethadam1/PdoFish2",
+    "description": "A flexible, lightweight PDO wrapper for PHP inspired by Active Record",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Scheinberg"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
+    "minimum-stability": "stable"
+}
