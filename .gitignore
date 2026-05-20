@@ -9,6 +9,8 @@ composer.lock
 .env
 .env.local
 .env.*.local
+credentials.php 
+credentials.json
 
 # Logs
 *.log
