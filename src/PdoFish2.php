@@ -47,8 +47,15 @@ class PdoFish2 {
 		return $this;
 	}
 
+	# shortcut for database tables
 	public function t($tbl) {
 		$this->table = $tbl;
+		return $this;
+	}
+
+	# shortcut for database views, which are prefixed with "v_"
+	public function v($tbl) {
+		$this->table = "v_".$tbl;
 		return $this;
 	}
 
